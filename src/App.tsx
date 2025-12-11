@@ -28,15 +28,17 @@ function App() {
   return (
     <>
       <div>
-        <Accordion />
+        <Accordion data={faqs} />
       </div>
     </>
   )
 }
 
-function Accordion() {
+function Accordion({ data }: any) {
 
   const [usetext, setUsetext] = useState<faq[]>(faqs);
+  const [curOpen, isCurOpen] = useState(null);
+
 
 
   function changeText() {
@@ -47,31 +49,49 @@ function Accordion() {
   return <div className='accordion'>
 
     {
-      faqs.map((el, i) => <Item title={el.title} text={el.text} num={i} key={el.title} />)
+      data.map((el: any, i: any) =>
+        <Item
+          title={el.title}
+          curOpen={curOpen}
+          onCurOpen={isCurOpen}
+
+          num={i}
+          key={el.title} >{el.text} </Item>)
 
     }
   </div>;
 }
 
 
-function Item({ num, title, text }: any) {
+function Item({ num, title, curOpen, onCurOpen, children }: any) {
 
-  const [isopen, setIsopem] = useState(false);
+
+  const isopen = num === curOpen;
+
+  //const [isopen, setIsopem] = useState(false);
 
   function handleToggle() {
 
-    setIsopem(isopen => !isopen)
+    //setIsopem(isopen => !isopen)
+    onCurOpen(isopen ? null : num);
   }
 
-  return (<div className={`item ${isopen ? "open" : ""}`} onClick={handleToggle} >
-    <p className='number'>{num < 9 ? `0${num + 1}` : num + 1}</p>
-    < p className='text' > {title}</p >
-    <p className='icon'>{isopen ? "-" : "+"}</p>
-
-    {isopen && <p className='content-box'>{text}</p>}
 
 
-  </div >)
+  return (
+
+    <div className={`item ${isopen ? "open" : ""}`} onClick={handleToggle} >
+
+
+      <p className='number'>{num < 9 ? `0${num + 1}` : num + 1}</p>
+      < p className='text' > {title}</p >
+      <p className='icon'>{isopen ? "-" : "+"}</p>
+
+
+      {isopen && <p className='content-box'>{children}</p>}
+
+
+    </div >)
 
 
 }
